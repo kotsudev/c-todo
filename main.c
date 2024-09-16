@@ -86,6 +86,13 @@ int main()
 	return 0;
 }
 
+void flush_input_buffer()
+{
+	int ch;
+	while ((ch = getchar()) != '\n' && ch != EOF)
+		;
+}
+
 void add_task(Task **tasks, int *size)
 {
 	*tasks = realloc(*tasks, (*size + 1) * sizeof(Task));
@@ -95,10 +102,17 @@ void add_task(Task **tasks, int *size)
 		exit(1);
 	}
 
-	printf("Enter new task content:");
+	printf("Enter new task content (allowed length %d): ",
+	       ALLOWED_TASK_LEN - 1);
 	fgets((*tasks)[*size].content, ALLOWED_TASK_LEN, stdin);
 
 	(*tasks)[*size].content[strcspn((*tasks)[*size].content, "\n")] = 0;
+
+	if (strlen((*tasks)[*size].content) == ALLOWED_TASK_LEN - 1 &&
+	    (*tasks)[*size].content[ALLOWED_TASK_LEN - 2] != '\n') {
+		flush_input_buffer();
+	}
+
 	(*tasks)[*size].completed = false;
 	(*size)++;
 }
@@ -121,10 +135,16 @@ void remove_task(Task **tasks, int *size, int id)
 
 void update_task(Task **tasks, int id)
 {
-	printf("Update task content:");
+	printf("Update task content (allowed length %d): ",
+	       ALLOWED_TASK_LEN - 1);
 	fgets((*tasks)[id].content, ALLOWED_TASK_LEN, stdin);
 
 	(*tasks)[id].content[strcspn((*tasks)[id].content, "\n")] = 0;
+
+	if (strlen((*tasks)[id].content) == ALLOWED_TASK_LEN - 1 &&
+	    (*tasks)[id].content[ALLOWED_TASK_LEN - 2] != '\n') {
+		flush_input_buffer();
+	}
 }
 
 void render_tasks(const Task *tasks, int size, int id)
