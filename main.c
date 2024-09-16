@@ -96,8 +96,9 @@ void add_task(Task **tasks, int *size)
 	}
 
 	printf("Enter new task content:");
-	scanf("%s", (*tasks)[*size].content);
+	fgets((*tasks)[*size].content, ALLOWED_TASK_LEN, stdin);
 
+	(*tasks)[*size].content[strcspn((*tasks)[*size].content, "\n")] = 0;
 	(*tasks)[*size].completed = false;
 	(*size)++;
 }
@@ -121,7 +122,9 @@ void remove_task(Task **tasks, int *size, int id)
 void update_task(Task **tasks, int id)
 {
 	printf("Update task content:");
-	scanf("%s", (*tasks)[id].content);
+	fgets((*tasks)[id].content, ALLOWED_TASK_LEN, stdin);
+
+	(*tasks)[id].content[strcspn((*tasks)[id].content, "\n")] = 0;
 }
 
 void render_tasks(const Task *tasks, int size, int id)
